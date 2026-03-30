@@ -3,7 +3,7 @@
 
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Calculadora Contábil Advys</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <style>
@@ -430,12 +430,149 @@
             opacity: 1;
         }
 
-        @media (max-width: 600px) {
-            .tabs { flex-direction: column; }
-            .results-panel.active { flex-direction: column; }
-            .grid-2 { grid-template-columns: 1fr; }
-            .calculator-wrapper { padding: 24px; }
-            .tut-popover { width: 90%; left: 5% !important; margin-top: 10px; }
+        /* ============================================
+           RESPONSIVO COMPLETO PARA MOBILE
+        ============================================ */
+
+        /* Telas menores que 768px (tablet pequeno e celular) */
+        @media (max-width: 768px) {
+            body {
+                padding: 20px 12px;
+                align-items: flex-start;
+            }
+
+            .calculator-wrapper {
+                padding: 24px 18px;
+                border-radius: 16px;
+            }
+
+            h1 {
+                font-size: 1.3rem;
+                margin-bottom: 20px;
+            }
+
+            .main-logo {
+                width: 90px;
+                height: 90px;
+                margin-bottom: 14px;
+            }
+
+            .tabs {
+                flex-direction: column;
+                gap: 6px;
+                padding: 6px;
+            }
+
+            .tab-btn {
+                padding: 12px 10px;
+                font-size: 0.85rem;
+                text-align: left;
+                border-radius: 10px;
+            }
+
+            .grid-2 {
+                grid-template-columns: 1fr;
+                gap: 14px;
+            }
+
+            .results-panel.active {
+                flex-direction: column;
+                gap: 12px;
+            }
+
+            .result-card {
+                padding: 16px !important;
+            }
+
+            .result-value {
+                font-size: 1.6rem;
+            }
+
+            .attachment-btn {
+                min-width: 60px;
+                padding: 10px 8px;
+                font-size: 0.85rem;
+            }
+
+            .attachments {
+                gap: 6px;
+            }
+        }
+
+        /* Telas menores que 480px (celulares pequenos) */
+        @media (max-width: 480px) {
+            body {
+                padding: 12px 8px;
+            }
+
+            .calculator-wrapper {
+                padding: 18px 14px;
+                border-radius: 14px;
+            }
+
+            h1 {
+                font-size: 1.1rem;
+                margin-bottom: 16px;
+                line-height: 1.3;
+            }
+
+            .main-logo {
+                width: 70px;
+                height: 70px;
+                margin-bottom: 12px;
+            }
+
+            input, select {
+                font-size: 0.9rem;
+                padding: 12px 14px;
+            }
+
+            .input-group input {
+                padding-left: 38px;
+            }
+
+            .result-value {
+                font-size: 1.35rem;
+            }
+
+            .result-card h3 {
+                font-size: 0.8rem;
+            }
+
+            .form-group label {
+                font-size: 0.82rem;
+            }
+
+            .attachment-btn {
+                min-width: 52px;
+                padding: 9px 6px;
+                font-size: 0.78rem;
+            }
+
+            .restart-tut {
+                width: 50px;
+                height: 50px;
+                bottom: 14px;
+                right: 14px;
+            }
+        }
+
+        /* Tutorial no mobile: centralizado no centro da tela */
+        @media (max-width: 768px) {
+            .tut-popover {
+                position: fixed !important;
+                top: 50% !important;
+                left: 50% !important;
+                transform: translate(-50%, -50%) !important;
+                width: 90vw !important;
+                max-width: 380px;
+                max-height: 80vh;
+                overflow-y: auto;
+            }
+
+            .tut-popover.active {
+                transform: translate(-50%, -50%) !important;
+            }
         }
     </style>
 </head>
@@ -445,7 +582,7 @@
     <div id="tut-overlay-bg"></div>
 
     <div class="calculator-wrapper" id="calculator-main">
-        <img src="images.png" alt="Logo" class="main-logo">
+        <img src="controle_agora_logo.jfif" alt="Logo" class="main-logo">
         <h1>Simulador de Impostos e Contabilidade</h1>
 
         <div class="tabs" id="tut-target-tabs">
@@ -551,24 +688,23 @@
                     </div>
                 </div>
             </div>
-            
-            <div class="form-group">
-                <label>Tipo de Atividade</label>
-                <select id="pres-tipo" onchange="calcPresumido()">
-                    <option value="servico">Serviço</option>
-                    <option value="produto">Produto</option>
-                </select>
-            </div>
 
             <h3 style="margin: 20px 0 10px; font-size: 1rem; color: var(--text-muted)">Detalhamento de Impostos (Mensal)</h3>
-            <div class="grid-2" id="tut-target-detalhes">
-                <div class="form-group">
-                    <label>ISS (5%)</label>
-                    <div class="input-group">
-                        <span class="currency-symbol">R$</span>
-                        <input type="text" id="out-pres-iss" readonly>
-                    </div>
+            
+            <!-- Imposto Municipal: ISS (Serviço) ou ICMS (Produto) -->
+            <div class="form-group" id="row-pres-iss-icms">
+                <label id="label-pres-iss-icms">
+                    <span id="badge-iss" style="color: var(--primary); font-weight: 700;">ISS (5%)</span>
+                    <span style="color: var(--text-muted);"> | </span>
+                    <span id="badge-icms" style="color: var(--text-muted);">ICMS (18%)</span>
+                </label>
+                <div class="input-group">
+                    <span class="currency-symbol">R$</span>
+                    <input type="text" id="out-pres-iss" readonly>
                 </div>
+            </div>
+
+            <div class="grid-2" id="tut-target-detalhes">
                 <div class="form-group">
                     <label>PIS (0,65%)</label>
                     <div class="input-group">
@@ -855,43 +991,70 @@
 
         function calcPresumido() {
             const value = parseCurrency(document.getElementById("pres-mensal").value) || 0;
-            const tipo = document.getElementById("pres-tipo").value;
+            const tipoEl = document.getElementById("pres-tipo");
+            const tipo = tipoEl ? tipoEl.value : "servico";
+            const isProduto = (tipo === "produto");
+
+            // Atualiza os badges de destaque no label
+            const badgeIss  = document.getElementById("badge-iss");
+            const badgeIcms = document.getElementById("badge-icms");
+            if (badgeIss && badgeIcms) {
+                if (isProduto) {
+                    badgeIss.style.color   = "var(--text-muted)";
+                    badgeIss.style.fontWeight = "400";
+                    badgeIcms.style.color  = "var(--primary)";
+                    badgeIcms.style.fontWeight = "700";
+                } else {
+                    badgeIss.style.color   = "var(--primary)";
+                    badgeIss.style.fontWeight = "700";
+                    badgeIcms.style.color  = "var(--text-muted)";
+                    badgeIcms.style.fontWeight = "400";
+                }
+            }
 
             if (value <= 0) {
                 ['iss', 'pis', 'cofins', 'csll', 'ir', 'adir'].forEach(id => {
                     const el = document.getElementById(`out-pres-${id}`);
-                    if(el) el.value = '0,00';
+                    if (el) el.value = '0,00';
                 });
                 document.getElementById("out-pres-aliq-tot").innerText = "0.00";
                 document.getElementById("out-pres-total").innerText = "0,00";
                 return;
             }
 
-            const iss = handlePercent(5, value);
-            document.getElementById("out-pres-iss").value = `${formatAny(iss)}`;
+            // Calcula ISS (5%) para Serviço ou ICMS (18%) para Produto
+            let impostoMunicipal = 0;
+            if (isProduto) {
+                impostoMunicipal = handlePercent(18, value); // ICMS 18%
+            } else {
+                impostoMunicipal = handlePercent(5, value);  // ISS 5%
+            }
+            document.getElementById("out-pres-iss").value = formatAny(impostoMunicipal);
 
             const pis = handlePercent(0.65, value);
-            document.getElementById("out-pres-pis").value = `${formatAny(pis)}`;
+            document.getElementById("out-pres-pis").value = formatAny(pis);
 
             const cofins = handlePercent(3, value);
-            document.getElementById("out-pres-cofins").value = `${formatAny(cofins)}`;
+            document.getElementById("out-pres-cofins").value = formatAny(cofins);
 
-            const porcentagemPresuncao = tipo === "servico" ? 32 : 8;
-            const servicos = handlePercent(porcentagemPresuncao, value);
+            // Base de presunção: 32% serviço, 8% produto
+            const porcentagemPresuncao = isProduto ? 8 : 32;
+            const basePresuncao = handlePercent(porcentagemPresuncao, value);
 
-            const csll = handlePercent(9, servicos);
-            document.getElementById("out-pres-csll").value = `${formatAny(csll)}`;
+            const csll = handlePercent(9, basePresuncao);
+            document.getElementById("out-pres-csll").value = formatAny(csll);
 
-            const ir = handlePercent(15, servicos);
-            document.getElementById("out-pres-ir").value = `${formatAny(ir)}`;
+            const ir = handlePercent(15, basePresuncao);
+            document.getElementById("out-pres-ir").value = formatAny(ir);
 
             let ad_ir = 0;
-            if (servicos > 20000) {
-                ad_ir = handlePercent(10, servicos - 20000);
+            if (basePresuncao > 20000) {
+                ad_ir = handlePercent(10, basePresuncao - 20000);
             }
-            document.getElementById("out-pres-adir").value = `${formatAny(ad_ir)}`;
+            document.getElementById("out-pres-adir").value = formatAny(ad_ir);
 
-            const total = iss + pis + cofins + csll + ir + ad_ir;
+            // Usa o imposto municipal correto no total
+            const total = impostoMunicipal + pis + cofins + csll + ir + ad_ir;
             const aliqEfetiva = (total / value) * 100;
 
             document.getElementById("out-pres-aliq-tot").innerText = formatAny(aliqEfetiva);
