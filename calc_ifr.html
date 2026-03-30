@@ -1,0 +1,361 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="preconnect" href="https://fonts.gstatic.com">
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700;900&display=swap" rel="stylesheet">
+
+  <link rel="stylesheet" type="text/css" href="./assets/css/bootstrap.min.css"/>
+  <link rel="stylesheet" type="text/css" href="./assets/css/animate.css" />
+
+  <link rel="stylesheet" href="./assets/styles/global.css">
+
+  <link rel="stylesheet" href="./assets/styles/home.css">
+  <link rel="stylesheet" href="./assets/styles/calculadoras.css">
+
+  <link rel="stylesheet" href="./assets/styles/flickity.min.css">
+  <link rel="shortcut icon" href="favicon.ico" type="image/x-icon">
+  <title>ADVYS</title>
+
+  <meta name="author" content="">
+  <meta name="description" content="A Advys tem como proposta ser o braço direito, ajudando a tomar as melhores decisões e a realizar seu sonho, de forma segura, economizando tempo, energia e dinheiro. ">
+  <meta name="keywords" content="Advys, contabilidade, serviços de contabilidade, informações jurídicas, consultoria empresarial, contabilidade moderna">
+  
+  <style type="text/css">
+    h2{font-size: 1.3rem!important;}
+  </style>
+
+</head>
+
+<body>
+
+  <main class="main-container container" style="padding-bottom:0;align-items: normal;">
+    <h1>
+      Faça o cálculo de quanto poderá economizar e simule seu imposto no Simples e Lucro Presumido
+    </h1>
+
+    <div class="calculator">
+      <div class="selectors">
+        <button id="economia-btn" class="active" onclick="economiaClick(this)">
+          Orçamento Contabilidade
+        </button>
+        <button id="simples-nacional" onclick="simplesClick(this)">
+          Imposto Simples Nacional
+        </button>
+        <button id="lucro-presumido" onclick="presumidoClick(this)">
+          Imposto Lucro Presumido
+        </button>
+      </div>
+
+      <main class="main-calculator" id="calc-economia">
+        <label class="question">
+          <span>Qual o faturamento mensal?</span>
+          <select name="economia-faturamento" id="economia-faturamento">
+            <!-- <option value="0">MEI</option> -->
+            <!-- <option value="8000">Até R$ 10 Mil</option>
+            <option value="15000">Até R$ 20 Mil</option> -->
+            <option value="30000">Até R$ 30 Mil</option>
+            <option value="60000">Até R$ 60 Mil</option>
+            <option value="300000">Até R$ 300 Mil</option>
+          </select>
+        </label>
+
+        
+        <label class="question">
+          <span>Tipo</span>
+          <select name="regime" id="regime">
+            <option value="servico">SERVIÇO</option>
+            <option value="indCom">INDUSTRIA / COMÉRCIO</option>
+          </select>
+        </label>
+        
+        <label class="question">
+          <span>Qual a quantidade de colaboradores/prólabores</span>
+          <input type="number" id="colaboradores" step="1" min="0" value="0">
+        </label>
+      </main>
+
+      <main class="main-calculator" id="calc-simples">
+        <label class="question">
+          <span>Receita Bruta Mensal</span>
+          <input type="number" id="simples-mensal" placeholder="10.000,00" step="0.01" min="0.01" value="R$ 10.000,00">
+        </label>
+
+        <label class="question">
+          <span>Receita Bruta Em 12 Meses</span>
+          <input type="number" id="simples-anual" placeholder="120.000,00" step="0.01" min="0.01" value="R$ 120.000,00">
+        </label>
+
+        <label class="question blue">
+          <span>Aliquota Efetiva Simples</span>
+          <input type="text" id="simples-efetiva-percent" readonly value="4%">
+        </label>
+
+        <label class="question blue">
+          <span>Imposto Simples Nacional R$</span>
+          <input type="text" id="simples-efetiva-value" readonly value="R$ 0,00">
+        </label>
+      </main>
+
+      <main class="main-calculator" id="calc-presumido">
+        <label class="question">
+          <span>Receita Bruta Mensal</span>
+          <input type="number" id="presumido-mensal" placeholder="10.000,00" step="0.01" min="0.01" value="10.000,00">
+        </label>
+
+        <label class="question">
+          <span>Receita Bruta Em 12 Meses</span>
+          <input type="number" id="presumido-anual" placeholder="120.000,00" step="0.01" min="0.01" value="120.000,00">
+        </label>
+
+        <label class="question full">
+          <span>Tipo</span>
+          <select onchange="presumidoSubmit()" id="presumido-tipo">
+            <option selected value="servico">Serviço</option>
+            <option value="produto">Produto</option>
+          </select>
+        </label>
+
+        <label class="question full">
+          <span>
+            <h1>Cálculos</h1>
+          </span>
+        </label>
+
+
+        <label class="question">
+          <span>ISS de 5%</span>
+          <input type="text" id="presumido-iss" readonly value="R$ 500,00">
+        </label>
+
+        <label class="question">
+          <span>PIS de 0,65%</span>
+          <input type="text" id="presumido-pis" readonly value="R$ 65,00">
+        </label>
+
+        <label class="question">
+          <span>Cofins de 3%</span>
+          <input type="text" id="presumido-cofins" readonly value="R$ 300,00">
+        </label>
+        <label class="question">
+          <span>CSLL de 9%</span>
+          <input type="text" id="presumido-csll" readonly value="R$ 288,00">
+        </label>
+        <label class="question">
+          <span>IR de 15%</span>
+          <input type="text" id="presumido-ali-ir" readonly value="R$ 480,00">
+        </label>
+        <label class="question">
+          <span>Adicional do IR </span>
+          <input type="text" id="adicional-ir" readonly value="R$ 0,00">
+        </label>
+      </main>
+    </div>
+
+    <div class="results-container" id="economia-results">
+      
+      <div class="economy">
+        <h2>Custo para Simples Nacional:</h2>
+        <div class="value">
+          <span>R$</span>
+          <h3 id="economia-simples">357,00</h3>
+          <span>/Mês</span>
+        </div>
+      </div>
+      
+      <div class="economy">
+        <h2>Custo para Lucro Presumido:</h2>
+        <div class="value">
+          <span>R$</span>
+          <h3 id="economia-presumido">497,00</h3>
+          <span>/Mês</span>
+          <!-- <span>/Ano</span> -->
+        </div>
+      </div>
+      
+    </div>
+
+    <div class="results-container" id="simples-results">
+      <button class="attachment active" id="att1" onclick="attachmentClick(1)">
+        <h2>Anexo 1</h2>
+      </button>
+      <button class="attachment" id="att2" onclick="attachmentClick(2)">
+        <h2>Anexo 2</h2>
+      </button>
+      <button class="attachment" id="att3" onclick="attachmentClick(3)">
+        <h2>Anexo 3</h2>
+      </button>
+      <button class="attachment" id="att4" onclick="attachmentClick(4)">
+        <h2>Anexo 4</h2>
+      </button>
+      <button class="attachment" id="att5" onclick="attachmentClick(5)">
+        <h2>Anexo 5</h2>
+      </button>
+    </div>
+
+    <div class="results-container" id="presumido-results">
+      
+      <div class="economy">
+        <h2>Imposto Presumido:</h2>
+        <div class="value">
+          <span>R$</span>
+          <h3 id="price-presumido-anual">0,00</h3>
+        </div>
+      </div>
+      
+      <div class="economy">
+        <h2>Aliquota Efetiva:</h2>
+        <div class="value">
+          <h3 id="price-presumido-pis">0</h3>
+          <span>%</span>
+        </div>
+      </div>
+      
+      <div class="economy" style="display: none;">
+        <h2>CSLL + IR:</h2>
+        <div class="value">
+          <span>R$</span>
+          <h3 id="csll-ir">0,00</h3>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <aside class="risk container">
+    <header>
+      <h3>Não sabe se precisa de nossos serviços? Faça o teste, leva menos de 1 minuto</h3>
+    </header>
+
+    <div id="root"></div>
+  </aside>
+
+  <script src="./assets/js/jquery-3.5.1.min.js"></script>
+
+<script src="./assets/js/popper.min.js"></script>
+<script src="./assets/js/tether.min.js"></script>
+<script src="./assets/js/bootstrap.min.js"></script>
+<script src="./assets/js/jquery.mousewheel.min.js"></script>
+<script src="./assets/js/wow.min.js"></script>
+
+<script src="./includes/iframeResizer.contentWindow.min.js"></script>
+
+
+  <!-- Analise -->
+  <script>
+    !(function(e) {
+      function r(r) {
+        for (
+          var n, a, l = r[0], c = r[1], f = r[2], p = 0, s = []; p < l.length; p++
+        )
+          (a = l[p]),
+          Object.prototype.hasOwnProperty.call(o, a) &&
+          o[a] &&
+          s.push(o[a][0]),
+          (o[a] = 0);
+        for (n in c)
+          Object.prototype.hasOwnProperty.call(c, n) && (e[n] = c[n]);
+        for (i && i(r); s.length;) s.shift()();
+        return u.push.apply(u, f || []), t();
+      }
+
+      function t() {
+        for (var e, r = 0; r < u.length; r++) {
+          for (var t = u[r], n = !0, l = 1; l < t.length; l++) {
+            var c = t[l];
+            0 !== o[c] && (n = !1);
+          }
+          n && (u.splice(r--, 1), (e = a((a.s = t[0]))));
+        }
+        return e;
+      }
+      var n = {},
+        o = {
+          1: 0
+        },
+        u = [];
+
+      function a(r) {
+        if (n[r]) return n[r].exports;
+        var t = (n[r] = {
+          i: r,
+          l: !1,
+          exports: {}
+        });
+        return e[r].call(t.exports, t, t.exports, a), (t.l = !0), t.exports;
+      }
+      (a.m = e),
+      (a.c = n),
+      (a.d = function(e, r, t) {
+        a.o(e, r) ||
+          Object.defineProperty(e, r, {
+            enumerable: !0,
+            get: t
+          });
+      }),
+      (a.r = function(e) {
+        "undefined" != typeof Symbol &&
+          Symbol.toStringTag &&
+          Object.defineProperty(e, Symbol.toStringTag, {
+            value: "Module"
+          }),
+          Object.defineProperty(e, "__esModule", {
+            value: !0
+          });
+      }),
+      (a.t = function(e, r) {
+        if ((1 & r && (e = a(e)), 8 & r)) return e;
+        if (4 & r && "object" == typeof e && e && e.__esModule) return e;
+        var t = Object.create(null);
+        if (
+          (a.r(t),
+            Object.defineProperty(t, "default", {
+              enumerable: !0,
+              value: e
+            }),
+            2 & r && "string" != typeof e)
+        )
+          for (var n in e)
+            a.d(
+              t,
+              n,
+              function(r) {
+                return e[r];
+              }.bind(null, n)
+            );
+        return t;
+      }),
+      (a.n = function(e) {
+        var r =
+          e && e.__esModule ?
+          function() {
+            return e.default;
+          } :
+          function() {
+            return e;
+          };
+        return a.d(r, "a", r), r;
+      }),
+      (a.o = function(e, r) {
+        return Object.prototype.hasOwnProperty.call(e, r);
+      }),
+      (a.p = "./");
+      var l = (this["webpackJsonpadvys-calculadora"] =
+          this["webpackJsonpadvys-calculadora"] || []),
+        c = l.push.bind(l);
+      (l.push = r), (l = l.slice());
+      for (var f = 0; f < l.length; f++) r(l[f]);
+      var i = c;
+      t();
+    })([]);
+  </script>
+  <script src="./static/js/2.31794dd2.chunk.js"></script>
+  <script src="./static/js/main.3a0c6d79.chunk.js"></script>
+  <!-- /Analise -->
+
+  <script src="./assets/scripts/calculadoras.js?v=0"></script>
+  </body>
+
+</html>

@@ -1,0 +1,1019 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Calculadora Contábil Advys</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-dark: #0f172a;
+            --glass-bg: rgba(30, 41, 59, 0.7);
+            --glass-border: rgba(255, 255, 255, 0.08);
+            --primary: #3b82f6;
+            --primary-glow: rgba(59, 130, 246, 0.4);
+            --success: #10b981;
+            --text-main: #f8fafc;
+            --text-muted: #94a3b8;
+            --highlight: rgba(255, 255, 255, 0.9);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Inter', sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-dark);
+            background-image: radial-gradient(circle at 50% 0%, #1e293b, #0f172a 70%);
+            color: var(--text-main);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            padding: 40px 20px;
+            overflow-x: hidden;
+        }
+
+        .calculator-wrapper {
+            width: 100%;
+            max-width: 800px;
+            background: var(--glass-bg);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid var(--glass-border);
+            border-radius: 24px;
+            padding: 40px;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+            animation: fadeIn 0.6s ease-out;
+            position: relative;
+            z-index: 10;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .main-logo {
+            display: block;
+            margin: 0 auto 20px auto;
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            object-fit: cover;
+            object-position: center;
+            background-color: #ffffff;
+            border: 3px solid var(--primary);
+            box-shadow: 0 10px 25px rgba(59, 130, 246, 0.4);
+        }
+
+        h1 {
+            text-align: center;
+            font-size: 1.8rem;
+            margin-bottom: 30px;
+            background: linear-gradient(135deg, #fff, #94a3b8);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 30px;
+            background: rgba(15, 23, 42, 0.6);
+            padding: 8px;
+            border-radius: 16px;
+            position: relative;
+            transition: all 0.3s ease;
+        }
+
+        .tab-btn {
+            flex: 1;
+            padding: 14px 20px;
+            background: transparent;
+            border: none;
+            color: var(--text-muted);
+            font-size: 0.95rem;
+            font-weight: 500;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            white-space: nowrap;
+        }
+
+        .tab-btn:hover {
+            color: var(--text-main);
+            background: rgba(255, 255, 255, 0.05);
+        }
+
+        .tab-btn.active {
+            background: var(--primary);
+            color: white;
+            box-shadow: 0 4px 15px var(--primary-glow);
+        }
+
+        .form-group {
+            margin-bottom: 24px;
+            position: relative;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-size: 0.9rem;
+            color: var(--text-muted);
+            font-weight: 500;
+        }
+
+        input, select {
+            width: 100%;
+            padding: 14px 16px;
+            background: rgba(15, 23, 42, 0.8);
+            border: 1px solid var(--glass-border);
+            border-radius: 12px;
+            color: white;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+        }
+
+        input:focus, select:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2);
+        }
+
+        input[readonly] {
+            background: rgba(15, 23, 42, 0.4);
+            border-color: transparent;
+            color: var(--success);
+            font-weight: 600;
+        }
+
+        .input-group {
+            position: relative;
+            display: flex;
+            align-items: center;
+        }
+
+        .input-group .currency-symbol {
+            position: absolute;
+            left: 16px;
+            color: var(--text-muted);
+            font-weight: 600;
+            pointer-events: none;
+        }
+
+        .input-group input {
+            padding-left: 45px;
+        }
+
+        .tab-content {
+            display: none;
+            animation: fadeIn 0.4s ease-out;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        .results-panel {
+            margin-top: 30px;
+            padding-top: 30px;
+            border-top: 1px solid var(--glass-border);
+            display: none;
+        }
+
+        .results-panel.active {
+            display: flex;
+            gap: 20px;
+            justify-content: space-between;
+        }
+
+        .result-card {
+            flex: 1;
+            background: rgba(15, 23, 42, 0.5);
+            padding: 24px;
+            border-radius: 16px;
+            border: 1px solid var(--glass-border);
+            text-align: center;
+            transition: transform 0.3s ease;
+            position: relative;
+        }
+
+        .result-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .result-card h3 {
+            font-size: 0.9rem;
+            color: var(--text-muted);
+            margin-bottom: 12px;
+        }
+
+        .result-value {
+            font-size: 2rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, #10b981, #34d399);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 4px;
+        }
+
+        .result-value .currency-symbol {
+            font-size: 1.2rem;
+            color: var(--text-muted);
+            -webkit-text-fill-color: var(--text-muted);
+        }
+
+        .result-unit {
+            font-size: 0.9rem;
+            color: var(--text-muted);
+        }
+
+        .attachments {
+            display: flex;
+            gap: 10px;
+            margin-top: 20px;
+            flex-wrap: wrap;
+            position: relative;
+        }
+
+        .attachment-btn {
+            flex: 1;
+            min-width: 100px;
+            padding: 12px;
+            background: rgba(15, 23, 42, 0.6);
+            border: 1px solid var(--glass-border);
+            color: var(--text-muted);
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .attachment-btn.active {
+            background: var(--primary);
+            color: white;
+            border-color: var(--primary);
+        }
+
+        .grid-2 {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+
+        /* ----- INTERACTIVE TUTORIAL / ONBOARDING ----- */
+
+        #tut-overlay-bg {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background: rgba(0, 0, 0, 0.7);
+            z-index: 9998;
+            display: none;
+            opacity: 0;
+            transition: opacity 0.4s ease;
+        }
+
+        .tut-highlight {
+            position: relative;
+            z-index: 10000;
+            pointer-events: none;
+            box-shadow: 0 0 0 5px rgba(59, 130, 246, 0.6), 0 0 20px 2px rgba(59, 130, 246, 0.3);
+            border-radius: 16px;
+            background: var(--glass-bg);
+            transition: all 0.3s ease;
+        }
+
+        .tut-popover {
+            position: absolute;
+            z-index: 10001;
+            background: var(--glass-bg);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 2px solid var(--primary);
+            border-radius: 20px;
+            width: 320px;
+            padding: 20px;
+            box-shadow: 0 15px 40px rgba(0,0,0,0.6);
+            display: none;
+            opacity: 0;
+            transform: translateY(20px);
+            transition: opacity 0.4s ease, transform 0.4s ease;
+            color: white;
+        }
+
+        .tut-popover.active {
+            display: block;
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .tut-header {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 15px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid var(--glass-border);
+        }
+
+        /* THE PHOTO REQUESTED BY USER */
+        .tut-avatar {
+            width: 65px;
+            height: 65px;
+            border-radius: 50%;
+            border: 3px solid var(--primary);
+            object-fit: cover;
+            background-color: #222;
+        }
+
+        .tut-title h3 {
+            font-size: 1.1rem;
+            margin: 0;
+            color: var(--text-main);
+        }
+
+        .tut-title span {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+        }
+
+        .tut-body {
+            font-size: 0.95rem;
+            line-height: 1.5;
+            color: #d1d5db;
+            margin-bottom: 20px;
+        }
+
+        .tut-body strong {
+            color: var(--primary);
+        }
+
+        .tut-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .tut-btn-skip {
+            background: transparent;
+            border: none;
+            color: var(--text-muted);
+            cursor: pointer;
+            font-size: 0.85rem;
+        }
+
+        .tut-btn-skip:hover {
+            color: #ef4444;
+        }
+
+        .tut-btn-next {
+            background: var(--primary);
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+        }
+        
+        /* Floating Bot to restart tutorial */
+        .restart-tut {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: var(--glass-bg);
+            border: 1px solid var(--glass-border);
+            border-radius: 50%;
+            width: 60px;
+            height: 60px;
+            cursor: pointer;
+            z-index: 100;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: 0.3s;
+        }
+        .restart-tut img {
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            object-fit: cover;
+        }
+        .restart-tut:hover {
+            transform: scale(1.1);
+        }
+        .restart-tut::after {
+            content: "Tutorial";
+            position: absolute;
+            top: -25px;
+            background: var(--primary);
+            color: white;
+            padding: 2px 8px;
+            border-radius: 10px;
+            font-size: 0.7rem;
+            opacity: 0;
+            transition: 0.3s;
+        }
+        .restart-tut:hover::after {
+            opacity: 1;
+        }
+
+        @media (max-width: 600px) {
+            .tabs { flex-direction: column; }
+            .results-panel.active { flex-direction: column; }
+            .grid-2 { grid-template-columns: 1fr; }
+            .calculator-wrapper { padding: 24px; }
+            .tut-popover { width: 90%; left: 5% !important; margin-top: 10px; }
+        }
+    </style>
+</head>
+
+<body>
+
+    <div id="tut-overlay-bg"></div>
+
+    <div class="calculator-wrapper" id="calculator-main">
+        <img src="images.png" alt="Logo" class="main-logo">
+        <h1>Simulador de Impostos e Contabilidade</h1>
+
+        <div class="tabs" id="tut-target-tabs">
+            <button class="tab-btn active" onclick="switchTab('orcamento', this)">Orçamento Contabilidade</button>
+            <button class="tab-btn" onclick="switchTab('simples', this)">Imposto Simples Nacional</button>
+            <button class="tab-btn" onclick="switchTab('presumido', this)">Imposto Lucro Presumido</button>
+        </div>
+
+        <!-- ORÇAMENTO -->
+        <div id="tab-orcamento" class="tab-content active">
+            <div class="grid-2">
+                <div class="form-group" id="tut-target-fat">
+                    <label>Faturamento Mensal</label>
+                    <div class="input-group">
+                        <span class="currency-symbol">R$</span>
+                        <input type="text" id="orc-faturamento" value="10.000,00" oninput="maskCurrency(this); calcOrcamento();" onchange="calcOrcamento()">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>Número de Funcionários</label>
+                    <input type="number" id="orc-colab" value="1" min="0" oninput="this.value = Math.abs(this.value); calcOrcamento();" onchange="calcOrcamento()">
+                </div>
+            </div>
+
+            <div class="results-panel active" id="tut-target-res-orc" style="flex-direction: column; gap: 15px;">
+                <div class="grid-2">
+                    <div class="result-card" style="padding: 15px;">
+                        <h3>Plano Enquadrado</h3>
+                        <div class="result-value" style="font-size: 1.4rem; color: var(--primary); -webkit-text-fill-color: initial; min-height: 38px; font-weight: 800;"><span id="out-orc-plano">Plano Start</span></div>
+                    </div>
+                    <div class="result-card" style="padding: 15px;">
+                        <h3>Mensalidade Base</h3>
+                        <div class="result-value" style="font-size: 1.5rem;"><span class="currency-symbol">R$</span> <span id="out-orc-base">589,00</span></div>
+                    </div>
+                </div>
+                <div class="grid-2">
+                    <div class="result-card" style="padding: 15px;">
+                        <h3>Adicional Funcionários</h3>
+                        <div class="result-value" style="font-size: 1.5rem;"><span class="currency-symbol">R$</span> <span id="out-orc-func">199,00</span></div>
+                    </div>
+                    <div class="result-card" style="padding: 15px; border-color: var(--primary); background: rgba(59, 130, 246, 0.1);">
+                        <h3 style="color: var(--primary);">Valor Total Final</h3>
+                        <div class="result-value" style="font-size: 1.8rem;"><span class="currency-symbol">R$</span> <span id="out-orc-total">788,00</span></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- SIMPLES NACIONAL -->
+        <div id="tab-simples" class="tab-content">
+            <div class="grid-2">
+                <div class="form-group">
+                    <label>Receita Bruta Mensal</label>
+                    <div class="input-group">
+                        <span class="currency-symbol">R$</span>
+                        <input type="text" id="simp-mensal" value="10.000,00" oninput="maskCurrency(this)" onchange="calcSimplesMensal()">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>Receita Bruta 12 Meses</label>
+                    <div class="input-group">
+                        <span class="currency-symbol">R$</span>
+                        <input type="text" id="simp-anual" value="120.000,00" oninput="maskCurrency(this)" onchange="calcSimplesAnual()">
+                    </div>
+                </div>
+            </div>
+
+            <div class="attachments" id="tut-target-anexo">
+                <button class="attachment-btn active" onclick="setSimplesAnexo(1, this)">Anexo 1</button>
+                <button class="attachment-btn" onclick="setSimplesAnexo(2, this)">Anexo 2</button>
+                <button class="attachment-btn" onclick="setSimplesAnexo(3, this)">Anexo 3</button>
+                <button class="attachment-btn" onclick="setSimplesAnexo(4, this)">Anexo 4</button>
+                <button class="attachment-btn" onclick="setSimplesAnexo(5, this)">Anexo 5</button>
+            </div>
+
+            <div class="results-panel active">
+                <div class="result-card">
+                    <h3>Alíquota Efetiva</h3>
+                    <div class="result-value"><span id="out-simp-aliq">4.00</span>%</div>
+                </div>
+                <div class="result-card">
+                    <h3>Imposto Total Mensal</h3>
+                    <div class="result-value"><span class="currency-symbol">R$</span> <span id="out-simp-valor">400,00</span></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- LUCRO PRESUMIDO -->
+        <div id="tab-presumido" class="tab-content" id="tut-target-pres">
+            <div class="grid-2">
+                <div class="form-group">
+                    <label>Receita Bruta Mensal</label>
+                    <div class="input-group">
+                        <span class="currency-symbol">R$</span>
+                        <input type="text" id="pres-mensal" value="10.000,00" oninput="maskCurrency(this)" onchange="calcPresMensal()">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>Receita Bruta 12 Meses</label>
+                    <div class="input-group">
+                        <span class="currency-symbol">R$</span>
+                        <input type="text" id="pres-anual" value="120.000,00" oninput="maskCurrency(this)" onchange="calcPresAnual()">
+                    </div>
+                </div>
+            </div>
+            
+            <div class="form-group">
+                <label>Tipo de Atividade</label>
+                <select id="pres-tipo" onchange="calcPresumido()">
+                    <option value="servico">Serviço</option>
+                    <option value="produto">Produto</option>
+                </select>
+            </div>
+
+            <h3 style="margin: 20px 0 10px; font-size: 1rem; color: var(--text-muted)">Detalhamento de Impostos (Mensal)</h3>
+            <div class="grid-2" id="tut-target-detalhes">
+                <div class="form-group">
+                    <label>ISS (5%)</label>
+                    <div class="input-group">
+                        <span class="currency-symbol">R$</span>
+                        <input type="text" id="out-pres-iss" readonly>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>PIS (0,65%)</label>
+                    <div class="input-group">
+                        <span class="currency-symbol">R$</span>
+                        <input type="text" id="out-pres-pis" readonly>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>COFINS (3%)</label>
+                    <div class="input-group">
+                        <span class="currency-symbol">R$</span>
+                        <input type="text" id="out-pres-cofins" readonly>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>CSLL (9%)</label>
+                    <div class="input-group">
+                        <span class="currency-symbol">R$</span>
+                        <input type="text" id="out-pres-csll" readonly>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>IR (15%)</label>
+                    <div class="input-group">
+                        <span class="currency-symbol">R$</span>
+                        <input type="text" id="out-pres-ir" readonly>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>Adicional IR (10%)</label>
+                    <div class="input-group">
+                        <span class="currency-symbol">R$</span>
+                        <input type="text" id="out-pres-adir" readonly>
+                    </div>
+                </div>
+            </div>
+
+            <div class="results-panel active">
+                <div class="result-card">
+                    <h3>Alíquota Efetiva Total</h3>
+                    <div class="result-value"><span id="out-pres-aliq-tot">0.00</span>%</div>
+                </div>
+                <div class="result-card">
+                    <h3>Imposto Total (R$)</h3>
+                    <div class="result-value"><span class="currency-symbol">R$</span> <span id="out-pres-total">0,00</span></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- POPOVER TUTORIAL -->
+    <div id="tut-popover" class="tut-popover">
+        <div class="tut-header">
+            <img src="Gemini_Generated_Image_ve5566ve5566ve55%20(1).png" alt="Leandro" class="tut-avatar" onerror="this.src='https://ui-avatars.com/api/?name=L&background=3b82f6&color=fff&size=128'">
+            <div class="tut-title">
+                <h3>Leandro</h3>
+                <span>Seu Assistente</span>
+            </div>
+        </div>
+        <div class="tut-body" id="tut-text"></div>
+        <div class="tut-footer">
+            <button class="tut-btn-skip" onclick="endTutorial()">Pular</button>
+            <button class="tut-btn-next" id="tut-next-btn" onclick="nextTutorial()">Próximo &rarr;</button>
+        </div>
+    </div>
+
+    <!-- Botão flutuante para reabrir tutorial -->
+    <div class="restart-tut" onclick="startTutorial()">
+        <img src="Gemini_Generated_Image_ve5566ve5566ve55%20(1).png" alt="Leandro" onerror="this.src='https://ui-avatars.com/api/?name=L&background=3b82f6&color=fff'">
+    </div>
+
+    <script>
+        // Utilities
+        function formatAny(value) {
+            return Number(value).toLocaleString("pt-br", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+        }
+
+        function handlePercent(percent, amount) {
+            return (percent / 100) * amount;
+        }
+
+        function parseCurrency(str) {
+            if (!str) return 0;
+            // Remove the dots thousands separator, replace comma with dot, then parse
+            let cleanStr = str.replace(/\./g, '').replace(',', '.');
+            return Number(cleanStr) || 0;
+        }
+
+        function maskCurrency(input) {
+            let value = input.value.replace(/\D/g, "");
+            if (value === "") value = "0";
+            let numericValue = Number(value) / 100;
+            input.value = numericValue.toLocaleString("pt-br", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+        }
+
+        // TABS LOGIC
+        function switchTab(tabId, btn) {
+            document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+            document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+            
+            if (btn) btn.classList.add('active');
+            else {
+                // Seleciona o botão correspondente manualmente se btn não foi passado
+                document.querySelectorAll('.tab-btn').forEach((b, i) => {
+                    if (i===0 && tabId==='orcamento') b.classList.add('active');
+                    if (i===1 && tabId==='simples') b.classList.add('active');
+                    if (i===2 && tabId==='presumido') b.classList.add('active');
+                });
+            }
+
+            document.getElementById('tab-' + tabId).classList.add('active');
+            
+            if(tabId === 'orcamento') calcOrcamento();
+            if(tabId === 'simples') calcSimples();
+            if(tabId === 'presumido') calcPresumido();
+        }
+
+        // 1. ORÇAMENTO CONTABILIDADE
+        function calcOrcamento() {
+            let formFatValue = document.getElementById("orc-faturamento").value;
+            let faturamento = parseCurrency(formFatValue);
+
+            if (faturamento <= 0 || isNaN(faturamento)) faturamento = 0;
+
+            let colab = Number(document.getElementById("orc-colab").value);
+            if (colab < 0 || isNaN(colab)) { 
+                colab = 0; 
+                document.getElementById("orc-colab").value = "0"; 
+            }
+
+            let base = 0;
+            let plano = "Sem Enquadramento";
+            let excedeuLimites = false;
+
+            if (faturamento > 0) {
+                if (faturamento <= 50000) {
+                    base = 589.00;
+                    plano = "Plano Start";
+                } else if (faturamento <= 300000) {
+                    base = 789.00;
+                    plano = "Plano Essencial";
+                } else if (faturamento <= 500000) {
+                    base = 997.00;
+                    plano = "Plano Controle";
+                } else {
+                    plano = "A Combinar";
+                    excedeuLimites = true;
+                }
+            }
+
+            let funcValue = 0;
+            if (colab > 0) {
+                if (colab <= 5) {
+                    funcValue = 199.00;
+                } else {
+                    funcValue = 199.00 + ((colab - 5) * 50);
+                }
+            }
+
+            const total = base + funcValue;
+
+            document.getElementById("out-orc-plano").innerText = plano;
+            
+            // Tratativa se passar de 500 mil:
+            if (excedeuLimites) {
+                document.getElementById("out-orc-base").innerText = "A Combinar";
+                document.getElementById("out-orc-base").previousElementSibling.style.display = 'none'; // hide R$ symbol
+                
+                document.getElementById("out-orc-func").innerText = formatAny(funcValue);
+                document.getElementById("out-orc-func").previousElementSibling.style.display = ''; 
+                
+                document.getElementById("out-orc-total").innerText = "A Combinar";
+                document.getElementById("out-orc-total").previousElementSibling.style.display = 'none';
+            } else {
+                document.getElementById("out-orc-base").innerText = formatAny(base);
+                document.getElementById("out-orc-base").previousElementSibling.style.display = ''; 
+                
+                document.getElementById("out-orc-func").innerText = formatAny(funcValue);
+                document.getElementById("out-orc-func").previousElementSibling.style.display = ''; 
+
+                document.getElementById("out-orc-total").innerText = formatAny(total);
+                document.getElementById("out-orc-total").previousElementSibling.style.display = ''; 
+            }
+        }
+
+        // 2. SIMPLES NACIONAL
+        let currentAnexo = 1;
+
+        function setSimplesAnexo(anexo, btn) {
+            document.querySelectorAll('.attachment-btn').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            currentAnexo = anexo;
+            calcSimples();
+        }
+
+        function calcSimplesMensal() {
+            const mensal = parseCurrency(document.getElementById("simp-mensal").value);
+            document.getElementById("simp-anual").value = formatAny(mensal * 12);
+            calcSimples();
+        }
+
+        function calcSimplesAnual() {
+            const anual = parseCurrency(document.getElementById("simp-anual").value);
+            document.getElementById("simp-mensal").value = formatAny(anual / 12);
+            calcSimples();
+        }
+
+        function calcSimples() {
+            const value = parseCurrency(document.getElementById("simp-mensal").value) || 0;
+            const yearValue = value * 12;
+
+            if (value <= 0) {
+                document.getElementById("out-simp-aliq").innerText = "0.00";
+                document.getElementById("out-simp-valor").innerText = "0,00";
+                return;
+            }
+
+            let percent = 0;
+            let discount = 0;
+
+            switch (currentAnexo) {
+                case 1:
+                    if (yearValue <= 180000) { percent = 4; } 
+                    else if (yearValue <= 360000) { percent = 7.3; discount = 5940; } 
+                    else if (yearValue <= 720000) { percent = 9.5; discount = 13860; } 
+                    else if (yearValue <= 1800000) { percent = 10.7; discount = 22500; } 
+                    else if (yearValue <= 3600000) { percent = 14.3; discount = 87300; } 
+                    else if (yearValue <= 4800000) { percent = 19; discount = 378000; }
+                    break;
+                case 2:
+                    if (yearValue <= 180000) { percent = 4.5; } 
+                    else if (yearValue <= 360000) { percent = 7.8; discount = 5940; } 
+                    else if (yearValue <= 720000) { percent = 10; discount = 13860; } 
+                    else if (yearValue <= 1800000) { percent = 11.2; discount = 22500; } 
+                    else if (yearValue <= 3600000) { percent = 14.7; discount = 85500; } 
+                    else if (yearValue <= 4800000) { percent = 30; discount = 720000; }
+                    break;
+                case 3:
+                    if (yearValue <= 180000) { percent = 6; } 
+                    else if (yearValue <= 360000) { percent = 11.2; discount = 9360; } 
+                    else if (yearValue <= 720000) { percent = 13.5; discount = 17640; } 
+                    else if (yearValue <= 1800000) { percent = 16; discount = 35640; } 
+                    else if (yearValue <= 3600000) { percent = 21; discount = 125640; } 
+                    else if (yearValue <= 4800000) { percent = 33; discount = 648000; }
+                    break;
+                case 4:
+                    if (yearValue <= 180000) { percent = 4.5; } 
+                    else if (yearValue <= 360000) { percent = 9; discount = 8100; } 
+                    else if (yearValue <= 720000) { percent = 10.2; discount = 12420; } 
+                    else if (yearValue <= 1800000) { percent = 14; discount = 39780; } 
+                    else if (yearValue <= 3600000) { percent = 22; discount = 183780; } 
+                    else if (yearValue <= 4800000) { percent = 33; discount = 828000; }
+                    break;
+                case 5:
+                    if (yearValue <= 180000) { percent = 15.5; } 
+                    else if (yearValue <= 360000) { percent = 18; discount = 4500; } 
+                    else if (yearValue <= 720000) { percent = 19.5; discount = 9900; } 
+                    else if (yearValue <= 1800000) { percent = 20.5; discount = 17100; } 
+                    else if (yearValue <= 3600000) { percent = 23; discount = 62100; } 
+                    else if (yearValue <= 4800000) { percent = 30.5; discount = 540000; }
+                    break;
+            }
+
+            const aliq = handlePercent(percent, yearValue) - discount;
+            const resultPercent = (aliq / 12 / value) * 100;
+            const imposM = (resultPercent / 100) * value;
+
+            document.getElementById("out-simp-aliq").innerText = formatAny(resultPercent);
+            document.getElementById("out-simp-valor").innerText = formatAny(imposM);
+        }
+
+        // 3. LUCRO PRESUMIDO
+        function calcPresMensal() {
+            const mensal = parseCurrency(document.getElementById("pres-mensal").value);
+            document.getElementById("pres-anual").value = formatAny(mensal * 12);
+            calcPresumido();
+        }
+
+        function calcPresAnual() {
+            const anual = parseCurrency(document.getElementById("pres-anual").value);
+            document.getElementById("pres-mensal").value = formatAny(anual / 12);
+            calcPresumido();
+        }
+
+        function calcPresumido() {
+            const value = parseCurrency(document.getElementById("pres-mensal").value) || 0;
+            const tipo = document.getElementById("pres-tipo").value;
+
+            if (value <= 0) {
+                ['iss', 'pis', 'cofins', 'csll', 'ir', 'adir'].forEach(id => {
+                    const el = document.getElementById(`out-pres-${id}`);
+                    if(el) el.value = '0,00';
+                });
+                document.getElementById("out-pres-aliq-tot").innerText = "0.00";
+                document.getElementById("out-pres-total").innerText = "0,00";
+                return;
+            }
+
+            const iss = handlePercent(5, value);
+            document.getElementById("out-pres-iss").value = `${formatAny(iss)}`;
+
+            const pis = handlePercent(0.65, value);
+            document.getElementById("out-pres-pis").value = `${formatAny(pis)}`;
+
+            const cofins = handlePercent(3, value);
+            document.getElementById("out-pres-cofins").value = `${formatAny(cofins)}`;
+
+            const porcentagemPresuncao = tipo === "servico" ? 32 : 8;
+            const servicos = handlePercent(porcentagemPresuncao, value);
+
+            const csll = handlePercent(9, servicos);
+            document.getElementById("out-pres-csll").value = `${formatAny(csll)}`;
+
+            const ir = handlePercent(15, servicos);
+            document.getElementById("out-pres-ir").value = `${formatAny(ir)}`;
+
+            let ad_ir = 0;
+            if (servicos > 20000) {
+                ad_ir = handlePercent(10, servicos - 20000);
+            }
+            document.getElementById("out-pres-adir").value = `${formatAny(ad_ir)}`;
+
+            const total = iss + pis + cofins + csll + ir + ad_ir;
+            const aliqEfetiva = (total / value) * 100;
+
+            document.getElementById("out-pres-aliq-tot").innerText = formatAny(aliqEfetiva);
+            document.getElementById("out-pres-total").innerText = formatAny(total);
+        }
+
+        // --- TUTORIAL INTERATIVO LOGIC ---
+        const tutorialSteps = [
+            {
+                elementId: 'tut-target-tabs',
+                text: "Olá! Eu sou o <strong>Leandro</strong>. <br><br>Bem-vindo ao Simulador! Aqui você tem 3 calculadoras poderosas em um só lugar. Comece alternando entre elas através destas <strong>Abas</strong>.",
+                action: () => switchTab('orcamento')
+            },
+            {
+                elementId: 'tut-target-fat',
+                text: "Logo na aba <strong>Orçamento</strong>, você preenche seu <strong>Faturamento</strong> e o tamanho da sua equipe. Isso é para saber quanto custará a contabilidade mensal.",
+                action: () => switchTab('orcamento')
+            },
+            {
+                elementId: 'tut-target-res-orc',
+                text: "Baseado nisso, exibimos o seu investimento mensal caso opte pelo <strong>Simples Nacional</strong> ou pelo <strong>Lucro Presumido</strong>.",
+                action: () => switchTab('orcamento')
+            },
+            {
+                elementId: 'tut-target-anexo',
+                text: "Na aba <strong>Simples Nacional</strong>, a mágica acontece. Você só insere sua Receita e clica em qual <strong>Anexo</strong> a sua empresa se enquadra. Os cálculos de dedução saem na hora!",
+                action: () => { switchTab('simples'); }
+            },
+            {
+                elementId: 'tut-target-detalhes',
+                text: "Já na aba <strong>Lucro Presumido</strong>, assim que você lança o faturamento, você pode conferir detalhadamente todos os impostos fragmentados (PIS, COFINS, ISS, etc.). <br><br>Gostou? Divirta-se usando a calculadora!",
+                action: () => { switchTab('presumido'); }
+            }
+        ];
+
+        let currentStep = 0;
+        const overlayBg = document.getElementById('tut-overlay-bg');
+        const popover = document.getElementById('tut-popover');
+        const body = document.body;
+
+        function startTutorial() {
+            currentStep = 0;
+            overlayBg.style.display = 'block';
+            setTimeout(() => overlayBg.style.opacity = '1', 10);
+            popover.classList.add('active');
+            renderStep();
+        }
+
+        function renderStep() {
+            // Limpa highlights antigos
+            document.querySelectorAll('.tut-highlight').forEach(el => el.classList.remove('tut-highlight'));
+
+            const step = tutorialSteps[currentStep];
+            step.action(); // executa aba ativa se tiver
+
+            setTimeout(() => {
+                const target = document.getElementById(step.elementId);
+                target.classList.add('tut-highlight');
+
+                const rect = target.getBoundingClientRect();
+
+                // Reposiciona o Popover (Abaixo ou Acima do elemento)
+                popover.style.display = 'block';
+                let topPos = rect.bottom + window.scrollY + 20;
+                
+                // Se a janela estiver apertada e for sair da tela:
+                if (topPos + 200 > window.innerHeight + window.scrollY) {
+                    topPos = rect.top + window.scrollY - 220; // Põe acima
+                }
+
+                popover.style.top = topPos + 'px';
+                popover.style.left = Math.max(20, rect.left) + 'px';
+
+                document.getElementById('tut-text').innerHTML = step.text;
+
+                const nextBtn = document.getElementById('tut-next-btn');
+                if (currentStep === tutorialSteps.length - 1) {
+                    nextBtn.innerHTML = "Finalizar";
+                } else {
+                    nextBtn.innerHTML = "Próximo &rarr;";
+                }
+                
+                // Rola a página para que o highlight fique no centro
+                target.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            }, 300);
+        }
+
+        function nextTutorial() {
+            if (currentStep < tutorialSteps.length - 1) {
+                currentStep++;
+                renderStep();
+            } else {
+                endTutorial();
+            }
+        }
+
+        function endTutorial() {
+            document.querySelectorAll('.tut-highlight').forEach(el => el.classList.remove('tut-highlight'));
+            overlayBg.style.opacity = '0';
+            popover.classList.remove('active');
+            setTimeout(() => overlayBg.style.display = 'none', 400);
+            
+            // Grava localStorage
+            localStorage.setItem("advys_tutorial_done_2", "true");
+            
+            // Retorna pra primeira aba
+            switchTab('orcamento');
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+
+        // Início
+        window.onload = () => {
+            calcOrcamento();
+            calcSimples();
+            calcPresumido();
+            
+            const done = localStorage.getItem("advys_tutorial_done_2");
+            if(!done) {
+                setTimeout(startTutorial, 500);
+            }
+        };
+    </script>
+</body>
+</html>
